@@ -1,0 +1,73 @@
+---
+title: "Munros"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+
+tuesdata <- tidytuesdayR::tt_load(2025, week = 33)
+
+scottish_munros <- tuesdata$scottish_munros
+```
+
+```{r}
+scotland <- ne_countries(geounit = "scotland", type = "map_units", scale="large")
+
+projection <- st_as_sf(scottish_munros |> 
+                         filter(!is.na(xcoord),
+                                !is.na(ycoord)),
+                       coords=c("xcoord","ycoord"),
+                       crs = 27700) |> 
+  st_transform(crs=4326) |> 
+  st_coordinates()
+
+scottish_munros <- scottish_munros |> 
+  filter(!is.na(xcoord)) |> 
+  cbind(projection)
+
+water <- ne_download(scale=10, type="lakes", category="physical")
+river <- ne_download(scale=10, type="rivers_lake_centerlines", category="physical")
+```
+
+```{r}
+sf_use_s2(FALSE)
+
+waterscotland <- st_filter(water,scotland)
+riverscotland <- st_filter(river, scotland)
+
+
+map <- scotland |> 
+  ggplot() +
+  geom_sf() +
+  geom_sf(data=waterscotland, fill="blue") +
+  geom_sf(data=riverscotland, color="blue") +
+  geom_point(data=scottish_munros |> 
+               filter(!is.na(`2021`)), 
+             aes(x=X, y=Y, color=`2021`),shape="^", size=3) +
+  theme_light() +
+  coord_sf(xlim=c(-10,0)) +
+  scale_color_brewer(palette="Dark2", direction=-1) +
+  labs(color="",
+       title="Munros of Scotland, as classified in 2021",
+       subtitle="Effect of the Great-Glen Fault",
+       caption="TidyTuesday") +
+  theme(legend.position="bottom",
+        legend.margin=margin(0,0,0,0),
+        plot.title.position="plot",
+        axis.title = element_blank(),
+        panel.background = element_rect(fill="lightblue"),
+        legend.key = element_rect(fill = NA))
+
+library(ggview)
+
+map + canvas(width=4.5, height=4.5, units="in")
+
+ggsave(map, width=4.5, height=4.5, units="in", filename="scotlandmap.png")
+```
+
+```{r}
+munros <- scottish_munros |> 
+  separate_wider_delim(Name, delim=" - ")
