@@ -41,12 +41,12 @@ p <- top10 |>
         legend.position = "bottom") +
   labs(x="",
        y="",
-       title="Top 10 Happiest Countries (2015-2024)",
-       subtitle="Countries that have consistently ranked in the top 10 happiest countries from 2015 to 2024",
-       caption= "Tidy Tuesday Week 36 2025 | Data: World Happiness Report")
+       title="Top 10 Easiest Passports to Travel With (2015-2025)",
+       subtitle="Countries that have consistently ranked in the top 10 countries for ease of travel",
+       caption= "Tidy Tuesday Week 36 2025 | Data: Henley Passport Index")
 
 library(ggview)
 
 p + canvas(width = 12, height = 4, units = "in", dpi = 300)
 
-ggsave("2025/36 - Country Ranks/happiest_countries.png", width = 12, height = 4, units = "in", dpi = 300)
+ggsave("2025/36 - Country Ranks/Henley Passport.png", width = 12, height = 4, units = "in", dpi = 300)
