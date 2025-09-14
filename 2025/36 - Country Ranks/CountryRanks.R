@@ -49,4 +49,4 @@ library(ggview)
 
 p + canvas(width = 12, height = 4, units = "in", dpi = 300)
 
-ggsave("2025/36 - Country Ranks/Henley Passport.png", width = 12, height = 4, units = "in", dpi = 300)
+ggsave("2025/36 - Country Ranks/Henley Passport.png", width = 12, height = 4, units = "in", dpi = 300, bg="white")
